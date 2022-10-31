@@ -26,10 +26,26 @@ async function run() {
             res.send(users);
         })
 
-        app.get('/user/:id', async (req, res) => {
+        app.get('/users/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await userCollection.findOne(query);
+            res.send(result);
+        })
+
+        app.put('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const user = req.body;
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    email: user.email,
+                    name: user.name,
+                    address: user.address
+                }
+            };
+            const result = await userCollection.updateOne(filter, updateDoc, options);
             res.send(result);
         })
 
